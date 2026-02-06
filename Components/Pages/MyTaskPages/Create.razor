@@ -1,0 +1,64 @@
+﻿@page "/mytasks/create"
+@using Microsoft.EntityFrameworkCore
+@using _2401377C.Domain
+@inject IDbContextFactory<_2401377C.Data._2401377CContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>MyTask</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="MyTask" OnValidSubmit="AddMyTask" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="taskname" class="form-label">TaskName:</label> 
+                <InputText id="taskname" @bind-Value="MyTask.TaskName" class="form-control" /> 
+                <ValidationMessage For="() => MyTask.TaskName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="iscompleted" class="form-label">IsCompleted:</label> 
+                <InputCheckbox id="iscompleted" @bind-Value="MyTask.IsCompleted" class="form-check-input" /> 
+                <ValidationMessage For="() => MyTask.IsCompleted" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="duedate" class="form-label">DueDate:</label> 
+                <InputDate id="duedate" @bind-Value="MyTask.DueDate" class="form-control" /> 
+                <ValidationMessage For="() => MyTask.DueDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createddate" class="form-label">CreatedDate:</label> 
+                <InputDate id="createddate" @bind-Value="MyTask.CreatedDate" class="form-control" /> 
+                <ValidationMessage For="() => MyTask.CreatedDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="createdby" class="form-label">CreatedBy:</label> 
+                <InputText id="createdby" @bind-Value="MyTask.CreatedBy" class="form-control" /> 
+                <ValidationMessage For="() => MyTask.CreatedBy" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/mytasks">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private MyTask MyTask { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddMyTask()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.MyTask.Add(MyTask);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/mytasks");
+    }
+}

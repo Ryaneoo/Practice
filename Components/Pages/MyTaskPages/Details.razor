@@ -1,0 +1,54 @@
+﻿@page "/mytasks/details"
+@using Microsoft.EntityFrameworkCore
+@using _2401377C.Domain
+@inject IDbContextFactory<_2401377C.Data._2401377CContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>MyTask</h2>
+    <hr />
+    @if (mytask is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">TaskName</dt>
+            <dd class="col-sm-10">@mytask.TaskName</dd>
+            <dt class="col-sm-2">IsCompleted</dt>
+            <dd class="col-sm-10">@mytask.IsCompleted</dd>
+            <dt class="col-sm-2">DueDate</dt>
+            <dd class="col-sm-10">@mytask.DueDate</dd>
+            <dt class="col-sm-2">CreatedDate</dt>
+            <dd class="col-sm-10">@mytask.CreatedDate</dd>
+            <dt class="col-sm-2">CreatedBy</dt>
+            <dd class="col-sm-10">@mytask.CreatedBy</dd>
+        </dl>
+        <div>
+            <a href="@($"/mytasks/edit?id={mytask.Id}")">Edit</a> |
+            <a href="@($"/mytasks")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private MyTask? mytask;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        mytask = await context.MyTask.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (mytask is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

@@ -1,0 +1,37 @@
+﻿@page "/"
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<_2401377C.Data._2401377CContext> DbFactory
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+<h1>Hello, world!</h1>
+
+<button class="btn btn-primary" @onclick="HasExpired">Check</button>
+
+
+@code {
+    private List<DateTime> tasktime = new();
+    private DateTime tdy = DateTime.Today;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        tasktime = await db.MyTask.Select(t => t.DueDate).ToListAsync();
+        Console.WriteLine($"Loaded {tasktime.Count} dates");
+    }
+
+    private async Task HasExpired()
+    {
+        foreach (var i in tasktime)
+        {
+            if( i < DateTime.Today)
+            {
+                await JS.InvokeVoidAsync("console.log", "true");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("console.log", "false");
+            }
+        }
+    }
+}
