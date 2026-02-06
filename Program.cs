@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContextFactory<_2401377CContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("_2401377CContext") ?? throw new InvalidOperationException("Connection string '_2401377CContext' not found.")));
-
+builder.Services.AddControllers();
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -41,7 +41,7 @@ builder.Services.AddIdentityCore<_2401377CUser>(options => options.SignIn.Requir
 builder.Services.AddSingleton<IEmailSender<_2401377CUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
-
+app.MapDefaultControllerRoute();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
